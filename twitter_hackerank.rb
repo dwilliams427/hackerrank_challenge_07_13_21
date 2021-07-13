@@ -196,9 +196,9 @@ FIRST LOOP
       if number is div by 2 AND 3 --> 6 is true
         false
       ****FOR SEVEN, ELEVEN, AND 12 IS BONKERS --> https://www.chilimath.com/lessons/introductory-algebra/divisibility-rules-for-7-11-and-12/
-      for number 7 --> take last digit, double it, then original number - new number ---> REPEAT UNTIL ONLY 2 DIGITS -- if new 2 digit number
+      for number 7 --> take last digit, double it, then original number (subtract) new number ---> REPEAT UNTIL ONLY 2 DIGITS -- if new 2 digit number
         is div by 7, then 7 is true
-      for 8, if last THREE digits are div by 8, --> 8 is true
+      for 8, if last THREE digits as a whole number are div by 8, --> 8 is true
       if sum of digits is div by 9 --> 9 is true
         false
       if last digit is 0 --> 10 is true 
@@ -208,88 +208,138 @@ FIRST LOOP
         false
       for 12, if div by 3 and 4, --> 12 is true
         false
+
+      once our lowerbound have met our upperbound, we now move on to loop thru our new factors array
+      In this factors array, we will go thru and find n / index = ?, and add that num to array
+
       
   
 =end
-
+require 'set'
 def pthFactor(n, p)
   #FOURTH ATTEMPT
   return 1 if n == 1
   return 0 if p > n
-  return n if p == n
-
-  upper = n / 2
-  lower = 2
-  factors = [1]
-  # LOOP, until lowerbound == upperbound --- U = n/2, L = 1
-  while lower <= upper
-    if factors.length == p
-      p "factors: #{factors}"
-      return factors[p - 1]
-    end
-    # if n % L == 0
-    if n % lower == 0
-      #   add L to factors array --> [1, 2]
-      factors << lower
-      #   L++ 
-    end
-    lower += 1
-  end
-  factors << n
-  p "factors: #{factors}"
-  return factors[p - 1]
-
-
-  #THIRD ATTEMPT
-  # return 1 if n == 1
-  # return 0 if p > n
-  # return n if p == n
 
   # upper = n / 2
   # lower = 2
-  # factors = [1]
-  # # LOOP, until lowerbound == upperbound --- U = n/2, L = 1
-  # while lower <= upper
-  #   # if n % L == 0
+  factors = [1]
+  digits = n.to_s.chars.map {|digit| digit.to_i}
+  p "all digits: #{digits}"
+  # LOOP, until lowerbound == upperbound --- U = n/2, L = 1
+    # return factors[p - 1] if factors.length == p
+    if digits[-1] % 2 == 0 || n % 2 == 0
+      p "digits[-1]: #{digits[-1]}"
+      factors << 2 
+    end
+    if digits.sum % 3 == 0 || n % 3 == 0
+      p "digits sum: #{digits.sum}"
+      factors << 3
+    end
+    if (digits[-1] + digits[-2]) % 4 == 0 || n % 4 == 0
+      factors << 4
+    end
+    if n % 5 == 0 || digits[-1] == 0
+      factors << 5
+    end
+    if n % 2 == 0 && n % 3 == 0
+      factors << 6
+    end
+    if n % 7 == 0
+      factors << 7
+    end
+    if digits.pop(3).join % 8 == 0 || n % 8 == 0
+      p "number 8: #{digits.pop(3)}"
+      factors << 8
+    end
+    if digits.sum % 9 == 0 && n % 9 == 0
+      p "digits sum(9): #{digits.sum}"
+      factors << 9
+    end
+    if digits[-1] == 0 || n % 10 == 0
+      factors << 10
+    end
+    if n % 11 == 0
+      factors << 11
+    end
+    if (n % 4 == 0 && n % 3 == 0) || n % 12 == 0
+      factors << 12
+    end
+
+    final_arr = []
+    factors.each do |num|
+      if final_arr.include?(num)
+        next
+      end
+      final_arr << num
+      final_arr << n / num
+    end
+
+    # if n % L == 0
   #   if n % lower == 0
   #     #   add L to factors array --> [1, 2]
   #     factors << lower
   #     #   L++ 
   #   end
   #   lower += 1
-  # end
+
   # factors << n
-  # p "factors: #{factors}"
-  # return factors[p - 1]
-
-  # SECOND ATTEMPT
-  #check if prime first??
-  # goal post starts at 1 and 20 and they will both move closer to each other
-  # goal post will never go past halfway point
-  # return 1 if n == 1
-  # return 0 if p > n
-  # numbers = []
-  # factors = []
-  # (1..n).select { |num| numbers << num}
-  # puts("numbers #{numbers}")
-  # puts("factors: #{factors}")
-  # if factors[p - 1] == nil
-  #   return 0
-  # else
-  #   return factors[p - 1]
-  # end
+  final_arr.sort!
+  p "final_arr: #{final_arr}"
+  return final_arr[p - 1]
 
 
-  # FIRST ATTEMPT - LINEAR RUNTIME - TOO SLOW
-  # return 1 if n == 1
-  # factors = (1..n).select { |num|n % num == 0}
-  # puts("length #{factors.length}")
-  # puts("factors: #{factors}")
-  # if factors[p - 1] == nil
-  #   return 0
-  # else
-  #   return factors[p - 1]
-  # end
 end
 
-p pthFactor(20, 3)
+p pthFactor(21, 3)
+p pthFactor(22876792454961, 28)
+#THIRD ATTEMPT
+# return 1 if n == 1
+# return 0 if p > n
+# return n if p == n
+
+# upper = n / 2
+# lower = 2
+# factors = [1]
+# # LOOP, until lowerbound == upperbound --- U = n/2, L = 1
+# while lower <= upper
+#   # if n % L == 0
+#   if n % lower == 0
+#     #   add L to factors array --> [1, 2]
+#     factors << lower
+#     #   L++ 
+#   end
+#   lower += 1
+# end
+# factors << n
+# p "factors: #{factors}"
+# return factors[p - 1]
+
+# SECOND ATTEMPT
+#check if prime first??
+# goal post starts at 1 and 20 and they will both move closer to each other
+# goal post will never go past halfway point
+# return 1 if n == 1
+# return 0 if p > n
+# numbers = []
+# factors = []
+# (1..n).select { |num| numbers << num}
+# puts("numbers #{numbers}")
+# puts("factors: #{factors}")
+# if factors[p - 1] == nil
+#   return 0
+# else
+#   return factors[p - 1]
+# end
+
+
+# FIRST ATTEMPT - LINEAR RUNTIME - TOO SLOW
+# return 1 if n == 1
+# factors = (1..n).select { |num|n % num == 0}
+# puts("length #{factors.length}")
+# puts("factors: #{factors}")
+# if factors[p - 1] == nil
+#   return 0
+# else
+#   return factors[p - 1]
+# end
