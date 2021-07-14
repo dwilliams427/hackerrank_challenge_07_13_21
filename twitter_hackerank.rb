@@ -45,12 +45,6 @@ def numPlayers(k, scores)
   #hash = {}???
   #sorted_scores = scores.sort!
 
-  
-
-
-
-
-
 # CODE
   rank = 1
   sorted_scores = scores.sort! {|x, y| y <=> x}
@@ -59,8 +53,6 @@ def numPlayers(k, scores)
   index = 0
   hash = {}
 
-  #NEED TO USE A HASH SOMEHOW???
-  #HOW TO MAKE SURE EQUAL PLAYER'S RANKS ARE EQUAL AND ADJUST FOR POSITION IN LIST
   #rankings in order   1     2   2   4
   #                   [100, 80, 80, 40]
 
@@ -216,7 +208,7 @@ FIRST LOOP
   
 =end
 def pthFactor(n, p)
-  #FOURTH ATTEMPT
+  #FOURTH AND FINAL ATTEMPT
   return 1 if n == 1 && p < 2 #check if p is greater than 1
   return 0 if p > n
   return 0 if n.to_i == 0
@@ -267,16 +259,7 @@ def pthFactor(n, p)
       factors << 12
     end
 
-
-
     p "FACTORS AFTER IFS: #{factors}"
-    # if (Math.sqrt(n) % 1) > 0
-    #   factors << Math.sqrt(n).to_i
-    #   p "adding in square: #{Math.sqrt(n)}"
-    # end
-    # if n % 13 == 0
-    #   factors << 13
-    # end
 
     # now we can loop until our lower bound reaches our upper bound
     lower = 13
@@ -300,33 +283,22 @@ def pthFactor(n, p)
 
     p "FACTORS AFTER WHILE LOOP: #{factors}"
 
-    # duplicate factors array, loop backwards and add the divisors n / factors[index]
-    
+    # duplicate factors array
     factors.each do |num|
       final_arr << num
     end
-
+    #then loop backwards and add the divisors n / factors[index]
     factors.reverse.each do |num|
-      # next if final_arr.include?(num)
       final_arr << n / num unless final_arr.include?(n / num)
     end
 
     return 0 if p > final_arr.length
 
-    # if n % L == 0
-  #   if n % lower == 0
-  #     #   add L to factors array --> [1, 2]
-  #     factors << lower
-  #     #   L++ 
-  #   end
-  #   lower += 1
-
-  # factors << n
   p "final_arr BEFORE SORT: #{final_arr}"
-  # final_arr.sort!
   p "final_arr: #{final_arr}"
   p "final_arr length: #{final_arr.length} and p: #{p}"
   p "final result: #{final_arr[p - 1]}"
+
   return final_arr[p - 1]
 
 
