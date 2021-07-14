@@ -215,28 +215,29 @@ FIRST LOOP
       
   
 =end
-require 'set'
 def pthFactor(n, p)
   #FOURTH ATTEMPT
-  return 1 if n == 1
+  return 1 if n == 1 && p < 2 #check if p is greater than 1
   return 0 if p > n
+  return 0 if n.to_i == 0
 
   # upper = n / 2
   # lower = 2
   factors = [1]
+  final_arr = []
   digits = n.to_s.chars.map {|digit| digit.to_i}
   p "all digits: #{digits}"
   # LOOP, until lowerbound == upperbound --- U = n/2, L = 1
     # return factors[p - 1] if factors.length == p
-    if digits[-1] % 2 == 0 || n % 2 == 0
+    if n % 2 == 0 || digits[-1] % 2 == 0 
       p "digits[-1]: #{digits[-1]}"
       factors << 2 
     end
-    if digits.sum % 3 == 0 || n % 3 == 0
+    if n % 3 == 0 || digits.sum % 3 == 0
       p "digits sum: #{digits.sum}"
       factors << 3
     end
-    if (digits[-1] + digits[-2]) % 4 == 0 || n % 4 == 0
+    if n % 4 == 0 || (digits[-1] + digits[-2]) % 4 == 0
       factors << 4
     end
     if n % 5 == 0 || digits[-1] == 0
@@ -245,35 +246,72 @@ def pthFactor(n, p)
     if n % 2 == 0 && n % 3 == 0
       factors << 6
     end
-    if n % 7 == 0
+    if n % 7 == 0 
       factors << 7
     end
-    if digits.pop(3).join % 8 == 0 || n % 8 == 0
+    if n % 8 == 0 || digits.pop(3).join % 8 == 0 
       p "number 8: #{digits.pop(3)}"
       factors << 8
     end
-    if digits.sum % 9 == 0 && n % 9 == 0
+    if  n % 9 == 0 || (digits.sum % 9 == 0 && n % 9 == 0)
       p "digits sum(9): #{digits.sum}"
       factors << 9
     end
-    if digits[-1] == 0 || n % 10 == 0
+    if n % 10 == 0 || digits[-1] == 0
       factors << 10
     end
     if n % 11 == 0
       factors << 11
     end
-    if (n % 4 == 0 && n % 3 == 0) || n % 12 == 0
+    if n % 12 == 0 || (n % 4 == 0 && n % 3 == 0) 
       factors << 12
     end
 
-    final_arr = []
-    factors.each do |num|
-      if final_arr.include?(num)
-        next
+
+
+    p "FACTORS AFTER IFS: #{factors}"
+    # if (Math.sqrt(n) % 1) > 0
+    #   factors << Math.sqrt(n).to_i
+    #   p "adding in square: #{Math.sqrt(n)}"
+    # end
+    # if n % 13 == 0
+    #   factors << 13
+    # end
+
+    # now we can loop until our lower bound reaches our upper bound
+    lower = 13
+    upper = n / 2
+    counter = 1
+    while lower <= upper
+      #NEW REITERATION
+      #MAX NUMBER --> 1,000,000,000 and 500mil, 250mil
+      if counter == 100000000
+        return 1 if p == 1
+        return n if p == 2
+        return 0 if  p > 2        
+      end 
+      if n % lower == 0
+        factors << lower
+        upper = n / lower
       end
-      final_arr << num
-      final_arr << n / num
+      lower += 1
+      counter += 1
     end
+
+    p "FACTORS AFTER WHILE LOOP: #{factors}"
+
+    # duplicate factors array, loop backwards and add the divisors n / factors[index]
+    
+    factors.each do |num|
+      final_arr << num
+    end
+
+    factors.reverse.each do |num|
+      # next if final_arr.include?(num)
+      final_arr << n / num unless final_arr.include?(n / num)
+    end
+
+    return 0 if p > final_arr.length
 
     # if n % L == 0
   #   if n % lower == 0
@@ -284,15 +322,21 @@ def pthFactor(n, p)
   #   lower += 1
 
   # factors << n
-  final_arr.sort!
+  p "final_arr BEFORE SORT: #{final_arr}"
+  # final_arr.sort!
   p "final_arr: #{final_arr}"
+  p "final_arr length: #{final_arr.length} and p: #{p}"
+  p "final result: #{final_arr[p - 1]}"
   return final_arr[p - 1]
 
 
 end
 
-p pthFactor(21, 3)
+p pthFactor(10, 3)
+p pthFactor(1048576, 12)
 p pthFactor(22876792454961, 28)
+p pthFactor(67280421310721, 2)
+
 #THIRD ATTEMPT
 # return 1 if n == 1
 # return 0 if p > n
